@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -63,7 +64,13 @@ public class MainActivity extends AppCompatActivity {
         contactList = new ArrayList<>();
         listView = (ListView) findViewById(R.id.list_contact);
 
+
+
+        //isInternetAvailable();
+
         bypass_ssl();
+
+        check_connectivity();
 
 
         new GetContacts().execute();
@@ -111,19 +118,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void checking_connection() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED){
-            connected = true;
-
-            Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
-        }else {
-            connected = false;
-            Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_LONG).show();
+    private void check_connectivity(){
+        try {
+            URL url = new URL("http://www.google.com");
+            URLConnection connection = url.openConnection();
+            connection.connect();
+            Toast.makeText(getApplicationContext(), "Internet is connected" , Toast.LENGTH_LONG).show();
+        } catch (MalformedURLException e) {
+            Toast.makeText(getApplicationContext(), "Internet is not connected" , Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), "Internet is not connected" , Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     private class GetContacts extends AsyncTask<Void, Void, Void> {
